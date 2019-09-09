@@ -23,6 +23,7 @@ class JiraWebhook implements UnprotectedRootAction {
     public static final URL_NAME = 'jira-trigger-webhook-receiver'
     public static final ISSUE_UPDATED_WEBHOOK_EVENT = 'jira:issue_updated'
     public static final COMMENT_CREATED_WEBHOOK_EVENT = 'comment_created'
+    public static final VERSION_RELEASED_WEBHOOK_EVENT = 'jira:version_released'
     private JiraWebhookListener jiraWebhookListener
 
     @Inject
@@ -74,9 +75,19 @@ class JiraWebhook implements UnprotectedRootAction {
             jiraWebhookListener.commentCreated(commentEvent)
             validEvent = true
         }
+        if(rawWebhookEvent.isReleaseEvent()) {
+            log.fine("Received Webhook callback from release. Event type: ${rawWebhookEvent.eventType}")
+            WebhookReleaseEvent releaseEvent = new WebhookReleaseEventJsonParser().parse(webhookJsonObject)
+            releaseEvent.userId = rawWebhookEvent.userId
+            releaseEvent.userKey = rawWebhookEvent.userKey
+            jiraWebhookListener.releaseCreated(releaseEvent)
+            validEvent = true
+
+        }
         if (!validEvent) {
             log.warning('Received Webhook callback with an invalid event type or a body without comment/changelog. ' +
                     "Event type: ${rawWebhookEvent.eventType}. Event body contains: ${webhookEventMap.keySet()}.")
+            //todo: add release message
         }
     }
 
@@ -108,6 +119,10 @@ class JiraWebhook implements UnprotectedRootAction {
         boolean isCommentEvent() {
             (eventType == ISSUE_UPDATED_WEBHOOK_EVENT
                     || eventType == COMMENT_CREATED_WEBHOOK_EVENT) && webhookEventMap['comment']
+        }
+
+        boolean isReleaseEvent() {
+            eventType == VERSION_RELEASED_WEBHOOK_EVENT && webhookEventMap['version']
         }
 
         String getUserId() {

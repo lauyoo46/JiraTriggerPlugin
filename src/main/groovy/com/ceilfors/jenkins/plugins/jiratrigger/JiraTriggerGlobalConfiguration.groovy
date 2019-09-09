@@ -51,4 +51,8 @@ class JiraTriggerGlobalConfiguration extends GlobalConfiguration {
             throw exception.add(key, 'jiraUsername')
         }
     }
+
+    String getEncodedAuthentication() {
+        return (jiraUsername + ":" + jiraPassword).getBytes().encodeBase64().toString()
+    }
 }

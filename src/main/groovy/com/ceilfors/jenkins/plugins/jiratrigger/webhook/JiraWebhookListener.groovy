@@ -8,4 +8,6 @@ interface JiraWebhookListener {
     void commentCreated(WebhookCommentEvent commentEvent)
 
     void changelogCreated(WebhookChangelogEvent changelogEvent)
+
+    void releaseCreated(WebhookReleaseEvent releaseEvent)
 }
