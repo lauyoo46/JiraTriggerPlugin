@@ -15,8 +15,6 @@ import hudson.model.AbstractProject
 import hudson.model.Job
 import jenkins.model.Jenkins
 import jenkins.model.ParameterizedJobMixIn
-import org.codehaus.jettison.json.JSONObject
-
 import javax.inject.Inject
 import java.util.concurrent.CopyOnWriteArrayList
 
