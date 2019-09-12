@@ -85,9 +85,8 @@ class JiraWebhook implements UnprotectedRootAction {
 
         }
         if (!validEvent) {
-            log.warning('Received Webhook callback with an invalid event type or a body without comment/changelog. ' +
+            log.warning('Received Webhook callback with an invalid event type or a body without comment/changelog/version. ' +
                     "Event type: ${rawWebhookEvent.eventType}. Event body contains: ${webhookEventMap.keySet()}.")
-            //todo: add release message
         }
     }
 

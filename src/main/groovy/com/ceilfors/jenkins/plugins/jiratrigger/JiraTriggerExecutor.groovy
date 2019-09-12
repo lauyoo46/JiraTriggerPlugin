@@ -58,21 +58,8 @@ class JiraTriggerExecutor implements JiraWebhookListener {
 
     @Override
     void releaseCreated(WebhookReleaseEvent releaseEvent) {
-        List<AbstractProject> scheduledProjects = scheduleBuilds(releaseEvent)
-        Job job = lookupJob(releaseEvent.project, releaseEvent.version)
-        if(job) {
-            ParameterizedJobMixIn.scheduleBuild2(job, -1)
-        }
-    }
-
-    private Job lookupJob(Project project, Version version) {
-
-        Job job = (Job) jenkins.getItem("${project.key}")
-        if (!job) {
-            log.warning('Cannot trigger the release of the project! Job was not found.' )
-            return null
-        }
-        return job
+        scheduleBuilds(releaseEvent.project)
+        //todo: do we need fireListeners?
     }
 
     private void fireListeners(List<AbstractProject> scheduledProjects, Issue issue) {
@@ -90,18 +77,23 @@ class JiraTriggerExecutor implements JiraWebhookListener {
     List<AbstractProject> scheduleBuilds(Issue issue, ChangelogGroup changelogGroup) {
         scheduleBuildsInternal(JiraChangelogTrigger, issue, changelogGroup)
     }
-//
-//    List<AbstractProject> scheduleBuilds(WebhookReleaseEvent releaseEvent) {
-//        List<AbstractProject> scheduledProjects = []
-//        List<? extends JiraTrigger> triggers = getTriggers(JiraReleaseTrigger)
-//        for (trigger in triggers) {
-//            boolean scheduled = trigger.run(releaseEvent.project, releaseEvent.version)
-//            if (scheduled) {
-//                scheduledProjects << trigger.job
-//            }
-//        }
-//        scheduledProjects
-//    }
+
+    List<AbstractProject> scheduleBuilds(Project project) {
+        scheduleBuildsInternalProject(JiraReleaseTrigger, project)
+    }
+
+    List<AbstractProject> scheduleBuildsInternalProject(
+            Class<? extends JiraTrigger> triggerClass, Project project) {
+        List<AbstractProject> scheduledProjects = []
+        List<? extends JiraTrigger> triggers = getTriggers(triggerClass)
+        for(trigger in triggers) {
+            boolean scheduled = trigger.run(project)
+            if(scheduled) {
+                scheduledProjects << trigger.job
+            }
+        }
+        scheduledProjects
+    }
 
     /**
      * @return the scheduled projects

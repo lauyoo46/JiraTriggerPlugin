@@ -4,7 +4,6 @@ import com.atlassian.jira.rest.client.internal.json.JsonObjectParser
 import com.atlassian.jira.rest.client.internal.json.ProjectJsonParser
 import com.atlassian.jira.rest.client.internal.json.VersionJsonParser
 import com.ceilfors.jenkins.plugins.jiratrigger.JiraTriggerGlobalConfiguration
-import groovy.json.JsonSlurper
 import jenkins.model.Jenkins
 import org.codehaus.jettison.json.JSONException
 import org.codehaus.jettison.json.JSONObject
@@ -19,9 +18,8 @@ class WebhookReleaseEventJsonParser implements JsonObjectParser<WebhookReleaseEv
 
         JiraTriggerGlobalConfiguration jtgc = Jenkins.instance.getDescriptor(JiraTriggerGlobalConfiguration) as JiraTriggerGlobalConfiguration
         String authString = jtgc.getEncodedAuthentication()
-
         String projectId = webhookEvent.getJSONObject('version').getString('projectId')
-        def addr = "http://tempcomp17-19.ullink.lan:8081/rest/api/2/project/"
+        def addr = "http://10.106.0.77:8081/rest/api/2/project/"
         addr += projectId
         def conn = addr.toURL().openConnection() as HttpURLConnection
         conn.setRequestProperty("Authorization", "Basic ${authString}")

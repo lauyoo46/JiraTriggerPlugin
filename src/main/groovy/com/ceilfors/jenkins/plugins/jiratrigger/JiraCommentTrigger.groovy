@@ -2,6 +2,7 @@ package com.ceilfors.jenkins.plugins.jiratrigger
 
 import com.atlassian.jira.rest.client.api.domain.Comment
 import com.atlassian.jira.rest.client.api.domain.Issue
+import com.atlassian.jira.rest.client.api.domain.Project
 import groovy.util.logging.Log
 import hudson.Extension
 import hudson.model.Cause
@@ -40,8 +41,18 @@ class JiraCommentTrigger extends JiraTrigger<Comment> {
     }
 
     @Override
+    boolean filter(Project project) {
+        return false
+    }
+
+    @Override
     Cause getCause(Issue issue, Comment comment) {
         new JiraCommentTriggerCause()
+    }
+
+    @Override
+    Cause getCause(Project project) {
+        return null
     }
 
     @SuppressWarnings('UnnecessaryQualifiedReference')

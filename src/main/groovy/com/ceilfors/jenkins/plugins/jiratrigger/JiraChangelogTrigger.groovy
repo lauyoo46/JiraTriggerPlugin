@@ -2,6 +2,7 @@ package com.ceilfors.jenkins.plugins.jiratrigger
 
 import com.atlassian.jira.rest.client.api.domain.ChangelogGroup
 import com.atlassian.jira.rest.client.api.domain.Issue
+import com.atlassian.jira.rest.client.api.domain.Project
 import com.ceilfors.jenkins.plugins.jiratrigger.changelog.ChangelogMatcher
 import groovy.util.logging.Log
 import hudson.Extension
@@ -38,8 +39,18 @@ class JiraChangelogTrigger extends JiraTrigger<ChangelogGroup> {
     }
 
     @Override
+    boolean filter(Project project) {
+        return false
+    }
+
+    @Override
     Cause getCause(Issue issue, ChangelogGroup changelogGroup) {
         new JiraChangelogTriggerCause()
+    }
+
+    @Override
+    Cause getCause(Project project) {
+        return null
     }
 
     @SuppressWarnings('UnnecessaryQualifiedReference')

@@ -22,5 +22,6 @@ class JiraTriggerModule extends AbstractModule {
         Multibinder<JiraTriggerListener> jiraTriggerListenerBinder = Multibinder.newSetBinder(
                 binder(), JiraTriggerListener)
         jiraTriggerListenerBinder.addBinding().to(JiraCommentReplier)
+        jiraTriggerListenerBinder.addBinding().to(JiraReleaseReplier)
     }
 }
